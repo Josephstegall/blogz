@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, flash
+from flask import Flask, request, redirect, render_template, flash, session
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -8,7 +8,6 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'jfejfkflsk3465grdkfslw3r2'
 
-
 class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
@@ -16,7 +15,7 @@ class Blog(db.Model):
     blog_entry = db.Column(db.String(3000))
     
 
-    def __init__(blog_title, blog_entry):
+    def __init__(self, blog_title, blog_entry):
         self.blog_entry = blog_entry
         self.blog_title = blog_title
         
@@ -45,14 +44,19 @@ def newpost():
         post_name = request.form['post']
         new_entry = Blog(blog_title, post_name)
 
-        db.session.add(new_entry)
-        db.session.commit()
-        url = "/blog?id=" + int(new_entry.id)
-        return redirect(url)
+        if new_entry.validation():
+
+            db.session.add(new_entry)
+            db.session.commit()
+            single_entry = "/blog?id=" + str(new_entry.id)
+            return redirect(single_entry)
+
         
+        else:
+            flash ("Fill out all the fields you slacker!!", "error")
+            return render_template('newpost.html')
     else:
-        flash ("Fill out all the fields you slacker!!")
-        return render_template('newpost.html')
+        return render_template ('newpost.html')
 
     
 
