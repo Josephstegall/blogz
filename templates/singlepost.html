@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ Title }}</h1>
-    <h1>{{ entry.blog_title }}</h1>
-    <p>{{ entry.blog_entry }}</p>
+    
+    <h1>{{ title }}</h1>
+    <p>{{ body }}</p>
+    <a href="/blog?userid={{user_id}}">{{ user }}</a>
     
 {% endblock %}
